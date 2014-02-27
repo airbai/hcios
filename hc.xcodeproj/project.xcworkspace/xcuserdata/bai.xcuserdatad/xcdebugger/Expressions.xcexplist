@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "-[AFHTTPClient requestWithMethod:path:parameters:]:AFHTTPClient.m">
+      </ContextState>
+      <ContextState
+         contextName = "__64-[AFHTTPRequestOperation setCompletionBlockWithSuccess:failure:]_block_invoke_2:AFHTTPRequestOperation.m">
+      </ContextState>
+      <ContextState
+         contextName = "__64-[AFHTTPRequestOperation setCompletionBlockWithSuccess:failure:]_block_invoke:AFHTTPRequestOperation.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.error">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[AFHTTPRequestOperation hasAcceptableStatusCode]:AFHTTPRequestOperation.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "(NSString*)self.reponse">
+            </PersistentString>
+            <PersistentString
+               value = "self.response">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>
