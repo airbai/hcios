@@ -15,21 +15,26 @@
 #import "HealthCheckFilterViewController.h"
 #import "Post.h"
 #import "PostTableViewCell.h"
+#import "AKSegmentedControl.h"
 
 @interface HealthCheckMasterViewController () {
     NSMutableArray *_objects;
 }
 - (void)reload:(id)sender resultFrom:(NSString*)resultFrom;
 @end
-
 @implementation HealthCheckMasterViewController{
     @private
     NSArray *_posts;
     NSMutableArray *_postsForCurrentStatus;
+    NSMutableArray *_filteredPostsForCurrentServiceGroup;
     __strong UIActivityIndicatorView *_activityIndicatorView;
+    
+    AKSegmentedControl *segmentedControl1, *segmentedControl2, *segmentedControl3;
 }
 @synthesize segmentStatus;
-@synthesize btnFilter;
+@synthesize segStatus;
+@synthesize btnReload;
+@synthesize btnRetest;
 - (void)reload:(id)sender resultFrom:(NSString*)resultFrom {
     [_activityIndicatorView startAnimating];
     self.navigationItem.rightBarButtonItem.enabled = NO;
@@ -39,7 +44,29 @@
             [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil) message:[error localizedDescription] delegate:nil cancelButtonTitle:nil otherButtonTitles:NSLocalizedString(@"OK", nil), nil] show];
         } else {
             _posts = posts;
-            _postsForCurrentStatus = [self filter:@"DOWN" serviceGroup:@""];
+            _filteredPostsForCurrentServiceGroup = [self filter:_posts:@"" serviceGroup:@""];
+            _postsForCurrentStatus = [self filter:_filteredPostsForCurrentServiceGroup:[segStatus titleForSegmentAtIndex:segStatus.selectedSegmentIndex] serviceGroup:@""];
+            
+            [self.tableView reloadData];
+        }
+        
+        [_activityIndicatorView stopAnimating];
+        self.navigationItem.rightBarButtonItem.enabled = YES;
+    }];
+}
+
+- (void)reloadAllServers {
+    [_activityIndicatorView startAnimating];
+    self.navigationItem.rightBarButtonItem.enabled = NO;
+    
+    [Post reloadAllServers: @"0" done: ^(NSArray *posts, NSError *error) {
+        if (error) {
+            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil) message:[error localizedDescription] delegate:nil cancelButtonTitle:nil otherButtonTitles:NSLocalizedString(@"OK", nil), nil] show];
+        } else {
+            _posts = posts;
+            _filteredPostsForCurrentServiceGroup = [self filter:_posts:@"" serviceGroup:@""];
+            _postsForCurrentStatus = [self filter:_filteredPostsForCurrentServiceGroup:[segStatus titleForSegmentAtIndex:segStatus.selectedSegmentIndex] serviceGroup:@""];
+            
             [self.tableView reloadData];
         }
         
@@ -122,6 +149,8 @@
     IIViewDeckController* deckController =  [[IIViewDeckController alloc] initWithCenterViewController:centerController leftViewController:leftController
                                                                                    rightViewController:rightController];
     
+    
+    
     UIImage* infoButtonImage = [UIImage imageNamed:@"Reply.png"];;
     CGRect frameimg = CGRectMake(0, 0, infoButtonImage.size.width, infoButtonImage.size.height);
     UIButton * someButton = [[UIButton alloc] initWithFrame:frameimg];
@@ -131,24 +160,151 @@
     UIBarButtonItem * infoButton = [[UIBarButtonItem alloc] initWithCustomView:someButton];
     //[self setToolbarItems:[NSArray arrayWithObject:infoButton]];
     
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    [button setBackgroundImage:[UIImage imageNamed:@"ButtonMenu.png"] forState:UIControlStateNormal];
-    button.frame=CGRectMake(0.0, 100.0, 60.0, 30.0);
-    [button setTitle:@"Green" forState:UIControlStateNormal];
-    [button addTarget:self action:@selector(btnFilterClicked) forControlEvents:UIControlEventTouchUpInside];
-    UIBarButtonItem *myButton = [[UIBarButtonItem alloc] initWithCustomView:button];
-    self.navigationController.navigationItem.rightBarButtonItem = myButton;
     
-    [self.navigationController.toolbar setBackgroundImage:[UIImage imageNamed:@"background.png"] forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsDefault];
+    UIImage* filterImage = [UIImage imageNamed:@"Cart.png"];;
+    CGRect frameFilterImg = CGRectMake(0, 0, filterImage.size.width, filterImage.size.height);
+    UIButton * filterButton = [[UIButton alloc] initWithFrame:frameFilterImg];
+    [filterButton setBackgroundImage:filterImage forState:UIControlStateNormal];
+    [filterButton addTarget:self action:@selector(btnFilterClicked) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *myButton = [[UIBarButtonItem alloc] initWithCustomView:filterButton];
+    myButton.style = UIBarButtonItemStyleBordered;
+    //self.navigationItem.rightBarButtonItem = myButton;
+    UIBarButtonItem *filterButton1 = [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleDone target:self action:@selector(btnFilterClicked)] ;
     
-    UIImage *image = [UIImage imageNamed:@"nav.png"];
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
+    self.navigationItem.rightBarButtonItem = filterButton1;
     
-    [self.navigationController.navigationBar
-     setBackgroundImage:[UIImage imageNamed:@"nav.png"]
-     forBarMetrics:UIBarMetricsDefault];
-    //segmentStatus.selectedSegmentIndex = 0;
+    UIImage* settingImage = [UIImage imageNamed:@"Setting.png"];;
+    CGRect frameSettingImg = CGRectMake(0, 0, settingImage.size.width, settingImage.size.height);
+    UIButton * settingButton = [[UIButton alloc] initWithFrame:frameSettingImg];
+    [settingButton setBackgroundImage:settingImage forState:UIControlStateNormal];
+    [settingButton addTarget:self action:@selector(toggleDeck) forControlEvents:UIControlEventTouchUpInside];
+    //UIBarButtonItem *mySettingButton = [[UIBarButtonItem alloc] initWithCustomView:settingButton];
+    UIBarButtonItem *mySettingButton = [[UIBarButtonItem alloc] initWithCustomView:settingButton];
+    //self.navigationItem.rightBarButtonItem = myButton;
+    [self.navigationItem setLeftBarButtonItem: mySettingButton];
+    
+    UIBarButtonItem *configButton = [[UIBarButtonItem alloc] initWithTitle:@"Config" style:UIBarButtonItemStyleDone target:self action:@selector(toggleDeck)] ;
+    
+    self.navigationItem.leftBarButtonItem = configButton;
+    
+    segmentedControl3 = [[AKSegmentedControl alloc] initWithFrame:CGRectMake(10.0, 80 + 10.0, 180, 32.0)];
+    [segStatus addTarget:self action:@selector(segmentStatusChanged111:) forControlEvents:UIControlEventValueChanged];
+    [segmentedControl3 setSegmentedControlMode:AKSegmentedControlModeSticky];
+    [segmentedControl3 setSelectedIndexes:[NSIndexSet indexSetWithIndex:0] byExpandingSelection:NO];
+    
+    //[self setupSegmentedControl3];
+    
+    //[self.navigationController.toolbar setBackgroundImage:[UIImage imageNamed:@"background.png"] forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsDefault];
 
+    //self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:6.0/255.0 green:12.0/255.0 blue:19.0/255.0 alpha:1.0];
+    //[self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"nav.png"]
+     //forBarMetrics:UIBarMetricsDefault];
+    
+    //leftController.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:6.0/255.0 green:12.0/255.0 blue:19.0/255.0 alpha:1.0];
+    //[leftController.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"nav.png"]
+                                                  //forBarMetrics:UIBarMetricsDefault];
+    //segmentStatus.selectedSegmentIndex = 0;
+    self.edgesForExtendedLayout = UIRectEdgeNone;
+
+}
+
+- (void)setupSegmentedControl3
+{
+    //UIImage *backgroundImage = [[UIImage imageNamed:@"tabs-bar-bg.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(10.0, 10.0, 10.0, 10.0)];
+    //[segmentedControl3 setBackgroundImage:backgroundImage];
+    [segmentedControl3 setContentEdgeInsets:UIEdgeInsetsMake(2.0, 2.0, 3.0, 2.0)];
+    [segmentedControl3 setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleBottomMargin];
+    
+    [segmentedControl3 setSeparatorImage:[UIImage imageNamed:@"tabs-bar-devider.png"]];
+    
+    UIImage *buttonBackgroundImagePressedLeft = [[UIImage imageNamed:@"active.png"]
+                                                 resizableImageWithCapInsets:UIEdgeInsetsMake(0.0, 4.0, 0.0, 1.0)];
+    UIImage *buttonBackgroundImagePressedCenter = [[UIImage imageNamed:@"active.png"]
+                                                   resizableImageWithCapInsets:UIEdgeInsetsMake(0.0, 4.0, 0.0, 1.0)];
+    UIImage *buttonBackgroundImagePressedRight = [[UIImage imageNamed:@"active.png"]
+                                                  resizableImageWithCapInsets:UIEdgeInsetsMake(0.0, 1.0, 0.0, 4.0)];
+    
+    
+    UIImage *buttonBackgroundImageReleasedLeft = [[UIImage imageNamed:@"inactive.png"]
+                                                 resizableImageWithCapInsets:UIEdgeInsetsMake(0.0, 4.0, 0.0, 1.0)];
+    UIImage *buttonBackgroundImageReleasedCenter = [[UIImage imageNamed:@"inactive.png"]
+                                                   resizableImageWithCapInsets:UIEdgeInsetsMake(0.0, 4.0, 0.0, 1.0)];
+    UIImage *buttonBackgroundImageReleasedRight = [[UIImage imageNamed:@"inactive.png"]
+                                                  resizableImageWithCapInsets:UIEdgeInsetsMake(0.0, 1.0, 0.0, 4.0)];
+    
+    UIColor* activeLabelColor = [UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0];
+    UIColor* normalLabelColor = [UIColor colorWithRed:22.0/255.0 green:166.0/255.0 blue:174.0/255.0 alpha:1.0];
+    // Button 1
+    UIButton *buttonSocial = [[UIButton alloc] init];
+    [buttonSocial setTitle:@"DOWN" forState:UIControlStateNormal];
+    [buttonSocial setTitleColor:normalLabelColor forState:UIControlStateNormal];
+    [buttonSocial setTitleColor:activeLabelColor forState:UIControlStateSelected];
+    [buttonSocial setTitleColor:activeLabelColor forState:UIControlStateHighlighted];
+    [buttonSocial.titleLabel setFont:[UIFont fontWithName:@"Arial Rounded MT Bold" size:15.0]];
+    [buttonSocial setTitleEdgeInsets:UIEdgeInsetsMake(0.0, 5.0, 0.0, 0.0)];
+    
+    UIImage *buttonSocialImageNormal = [UIImage imageNamed:@"social-icon.png"];
+    [buttonSocial setBackgroundImage:buttonBackgroundImagePressedLeft forState:UIControlStateHighlighted];
+    [buttonSocial setBackgroundImage:buttonBackgroundImagePressedLeft forState:UIControlStateSelected];
+    [buttonSocial setBackgroundImage:buttonBackgroundImagePressedLeft forState:(UIControlStateHighlighted|UIControlStateSelected)];
+    
+    [buttonSocial setBackgroundImage:buttonBackgroundImageReleasedLeft forState:UIControlStateNormal];
+    /*
+    [buttonSocial setImage:buttonSocialImageNormal forState:UIControlStateNormal];
+    [buttonSocial setImage:buttonSocialImageNormal forState:UIControlStateSelected];
+    [buttonSocial setImage:buttonSocialImageNormal forState:UIControlStateHighlighted];
+    [buttonSocial setImage:buttonSocialImageNormal forState:(UIControlStateHighlighted|UIControlStateSelected)];
+    */
+    // Button 2
+    UIButton *buttonStar = [[UIButton alloc] init];
+    UIImage *buttonStarImageNormal = [UIImage imageNamed:@"star-icon.png"];
+    
+    [buttonStar setTitle:@"UP" forState:UIControlStateNormal];
+    [buttonStar setTitleColor:normalLabelColor forState:UIControlStateNormal];
+    [buttonStar setTitleColor:normalLabelColor forState:UIControlStateNormal];
+    [buttonStar setTitleColor:activeLabelColor forState:UIControlStateHighlighted];
+    [buttonStar setTitleColor:activeLabelColor forState:UIControlStateSelected];
+    [buttonStar.titleLabel setFont:[UIFont fontWithName:@"Arial Rounded MT Bold" size:15.0]];
+    [buttonStar setTitleEdgeInsets:UIEdgeInsetsMake(0.0, 5.0, 0.0, 0.0)];
+    
+    [buttonStar setBackgroundImage:buttonBackgroundImagePressedCenter forState:UIControlStateHighlighted];
+    [buttonStar setBackgroundImage:buttonBackgroundImagePressedCenter forState:UIControlStateSelected];
+    [buttonStar setBackgroundImage:buttonBackgroundImagePressedCenter forState:(UIControlStateHighlighted|UIControlStateSelected)];
+    
+    [buttonStar setBackgroundImage:buttonBackgroundImageReleasedCenter forState:UIControlStateNormal];
+
+    /*
+    [buttonStar setImage:buttonStarImageNormal forState:UIControlStateNormal];
+    [buttonStar setImage:buttonStarImageNormal forState:UIControlStateSelected];
+    [buttonStar setImage:buttonStarImageNormal forState:UIControlStateHighlighted];
+    [buttonStar setImage:buttonStarImageNormal forState:(UIControlStateHighlighted|UIControlStateSelected)];
+    */
+    // Button 3
+    UIButton *buttonSettings = [[UIButton alloc] init];
+    
+    [buttonSettings setTitle:@"ALL" forState:UIControlStateNormal];
+    [buttonSettings setTitleColor:normalLabelColor forState:UIControlStateNormal];
+    [buttonSettings setTitleColor:activeLabelColor forState:UIControlStateHighlighted];
+    [buttonSettings setTitleColor:activeLabelColor forState:UIControlStateSelected];
+    [buttonSettings.titleLabel setFont:[UIFont fontWithName:@"Arial Rounded MT Bold" size:15.0]];
+    [buttonSettings setTitleEdgeInsets:UIEdgeInsetsMake(0.0, 5.0, 0.0, 0.0)];
+
+    UIImage *buttonSettingsImageNormal = [UIImage imageNamed:@"settings-icon.png"];
+    [buttonSettings setBackgroundImage:buttonBackgroundImagePressedRight forState:UIControlStateHighlighted];
+    [buttonSettings setBackgroundImage:buttonBackgroundImagePressedRight forState:UIControlStateSelected];
+    [buttonSettings setBackgroundImage:buttonBackgroundImagePressedRight forState:(UIControlStateHighlighted|UIControlStateSelected)];
+    
+    [buttonSettings setBackgroundImage:buttonBackgroundImageReleasedRight forState:UIControlStateNormal];
+
+    /*
+    [buttonSettings setImage:buttonSettingsImageNormal forState:UIControlStateNormal];
+    [buttonSettings setImage:buttonSettingsImageNormal forState:UIControlStateSelected];
+    [buttonSettings setImage:buttonSettingsImageNormal forState:UIControlStateHighlighted];
+    [buttonSettings setImage:buttonSettingsImageNormal forState:(UIControlStateHighlighted|UIControlStateSelected)];
+    */
+    [segmentedControl3 setButtonsArray:@[buttonSocial, buttonStar, buttonSettings]];
+    [segmentedControl3 setSelectedIndex:0];
+    //[self.navigationItem setTitleView:segmentedControl3];
 }
 
 - (void)didReceiveMemoryWarning
@@ -181,11 +337,6 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    /*
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
-
-    NSDate *object = _posts[indexPath.row];
-    cell.textLabel.text = [object description];*/
     static NSString *CellIdentifier = @"Cell";
     
     PostTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
@@ -193,7 +344,8 @@
         cell = [[PostTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     }
     
-    cell.post = [_postsForCurrentStatus objectAtIndex:indexPath.row];    return cell;
+    cell.post = [_postsForCurrentStatus objectAtIndex:indexPath.row];
+    return cell;
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
@@ -212,25 +364,6 @@
     }
 }
 
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
-{
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-
-
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return [PostTableViewCell heightForCellWithPost:[_postsForCurrentStatus objectAtIndex:indexPath.row]];
 }
@@ -238,13 +371,15 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([[segue identifier] isEqualToString:@"showDetail"]) {
+        
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
         NSDate *object = _postsForCurrentStatus[indexPath.row];
         [[segue destinationViewController] setDetailItem:object];
     }
 }
 
-- (IBAction)toggleDeck:(UIBarButtonItem *)sender {        [self.viewDeckController toggleLeftViewAnimated:YES];
+- (void)toggleDeck {
+    [self.viewDeckController toggleLeftViewAnimated:YES];
 }
 
 - (void)cancelButtonClicked: (HealthCheckFilterViewController *)healthCheckFilterViewController selectedGroups:(NSArray*)groups
@@ -254,12 +389,18 @@
         NSArray* selectedGroups =  groups;
         NSMutableArray* filtered = [[NSMutableArray alloc]init];
         [groups enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            [filtered addObjectsFromArray:[self filter:[segmentStatus titleForSegmentAtIndex:segmentStatus.selectedSegmentIndex] serviceGroup:obj ]];
+            [filtered addObjectsFromArray:[self filter:_posts: @"" /*[segStatus titleForSegmentAtIndex:segStatus.selectedSegmentIndex] */serviceGroup:obj ]];
         }];
-    
-        _postsForCurrentStatus = filtered;
+        
+        _filteredPostsForCurrentServiceGroup = filtered;
+        _postsForCurrentStatus = [self filter:_filteredPostsForCurrentServiceGroup:[segStatus titleForSegmentAtIndex:segStatus.selectedSegmentIndex] serviceGroup:@""];
         [self.tableView reloadData];
     }
+}
+
+-(void)dismissPopupView
+{
+    [self dismissPopupViewControllerWithanimationType:MJPopupViewAnimationFade];
 }
 
 -(NSArray*)prepareFilterData:(HealthCheckFilterViewController *)healthCheckFilterViewController
@@ -267,21 +408,27 @@
     return _posts;
 }
 
-- (IBAction)btnFilterClicked:(id)sender{
-    //HealthCheckFilterViewController* filter = [[HealthCheckFilterViewController alloc] init];
-    //UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:filter];
-    //filter.delegate = self;
-    //[[self navigationController] presentModalViewController:navController animated:YES];
-    //[self presentPopupViewController:filter animationType:MJPopupViewAnimationSlideBottomTop];
+- (void)btnFilterClicked{
     HealthCheckFilterViewController *filter = [self.storyboard instantiateViewControllerWithIdentifier:@"filter"];
+    UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    UIImage *backBtnImage = [UIImage imageNamed:@"RoundedButtonDone.png"]  ;
+    [backBtn setBackgroundImage:backBtnImage forState:UIControlStateNormal];
+    [backBtn addTarget:self action:@selector(btnDoneClicked) forControlEvents:UIControlEventTouchUpInside];
+    backBtn.frame = CGRectMake(0, 0, 54, 30);
+    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithCustomView:backBtn] ;
+    
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:filter];
     filter.delegate = self;
-    [self presentPopupViewController:filter animationType:MJPopupViewAnimationSlideBottomTop];
+    
+    [self presentPopupViewController:navController animationType:MJPopupViewAnimationSlideBottomTop];
 }
 
-- (IBAction)segmentStatusChanged:(UISegmentedControl*)sender {
+- (void)segmentStatusChanged111:(id)sender {
     
+    UISegmentedControl *segmentedControl1 = (UISegmentedControl *)sender;
     NSString * status = @"";
-    switch (sender.selectedSegmentIndex) {
+    NSInteger selectedSegment = segmentedControl1.selectedSegmentIndex;
+    switch (selectedSegment) {
         case 0:
             //Down
             status = @"DOWN";
@@ -293,7 +440,7 @@
             break;
     }
     
-    _postsForCurrentStatus = [self filter:status serviceGroup:@""];
+    _postsForCurrentStatus = [self filter: _filteredPostsForCurrentServiceGroup :status serviceGroup:@""];
     [self.tableView reloadData];
 
 }
@@ -304,15 +451,24 @@
     [self reload:nil resultFrom:@"1"];
 }
 
--(NSMutableArray*)filter:(NSString*)status serviceGroup:(NSString*)serviceGroup{
+-(IBAction)btnRetest:(UIBarButtonItem *)sender{
+    [self reload:Nil resultFrom:@"2"];
+}
+
+-(IBAction)btnReloadClicked:(UIBarButtonItem *)sender
+{
+    [self reloadAllServers];
+}
+
+-(NSMutableArray*)filter:(NSArray *)posts: (NSString*)status serviceGroup:(NSString*)serviceGroup{
     NSMutableArray* filtered = [[NSMutableArray alloc] init];
     
-    for (int i=0;i<[_posts count];i++)
+    for (int i=0;i<[posts count];i++)
     {
-        Post* item=[_posts objectAtIndex:i];
+        Post* item=[posts objectAtIndex:i];
         
-        if (([status isEqualToString:item.status]|| [status isEqualToString: @""])
-            && ([serviceGroup isEqualToString:item.serviceGroup] || [serviceGroup isEqualToString:@""] ))
+        if (([status isEqualToString:item.status] || ([status isEqualToString:@"DOWN"] && ([item.status isEqualToString:@"DOWN"] || [item.status isEqualToString:@"N/A"])) || [status isEqualToString: @""] || [status isEqualToString: @"ALL"])
+            && ([serviceGroup isEqualToString:item.serviceGroup] || [serviceGroup isEqualToString:@""] || [serviceGroup isEqualToString:@"All"]))
         {
             [filtered addObject:item];
         }

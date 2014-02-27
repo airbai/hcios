@@ -15,7 +15,8 @@
 @property int selectedRow;
 @property NSIndexPath* selectedIndexPath;
 @property (assign, nonatomic) id <MJSecondPopupDelegate>delegate;
-- (IBAction)btnDoneClicked:(id)sender;
+- (void)btnDoneClicked:(id)sender;
+@property (weak, nonatomic) IBOutlet UINavigationBar *nav;
 
 @end
 
@@ -23,4 +24,5 @@
 @optional
 - (void)cancelButtonClicked:(HealthCheckFilterViewController*)healthCheckFilterViewController selectedGroups:(NSArray*)selectedGroups;
 - (NSArray*)prepareFilterData:(HealthCheckFilterViewController*)healthCheckFilterViewController;
+-(void)dismissPopupView;
 @end

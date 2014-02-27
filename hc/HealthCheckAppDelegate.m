@@ -39,15 +39,12 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
     [NSURLCache setSharedURLCache:URLCache];
     
     [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    /*
-    HealthCheckCenterViewController *centerController = [[HealthCheckCenterViewController alloc] init];
-    HealthCheckSettingViewController* leftController = [[HealthCheckSettingViewController alloc] init];
-    HealthCheckMasterViewController* rightController = [[HealthCheckMasterViewController alloc] init];
-    IIViewDeckController* deckController =  [[IIViewDeckController alloc] initWithCenterViewController:centerController leftViewController:leftController
-                                                                                   rightViewController:rightController];
-    self.window.rootViewController = deckController;*/
+    
+    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound)];
+
     return YES;
 }
+
 
 @end
 #else
@@ -85,6 +82,24 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
     [self.window makeKeyAndOrderFront:self];
     
     return YES;
+}
+
+
+// Delegation methods
+- (void)application:(UIApplication *)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)devToken {
+    const void *devTokenBytes = [devToken bytes];
+    self.registered = YES;
+    [self sendProviderDeviceToken:devTokenBytes]; // custom method
+}
+
+- (void)application:(UIApplication *)app didFailToRegisterForRemoteNotificationsWithError:(NSError *)err {
+    NSLog(@"Error in registration. Error: %@", err);
+    
+}
+
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error
+{
+    NSLog(@"didFailToRegisterForRemoteNotificationsWithError:%@", [error localizedDescription]);
 }
 
 @end

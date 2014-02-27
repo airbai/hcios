@@ -5,19 +5,19 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>F6C73A2E-59CF-4155-8348-4B6D2DDF9599</string>
+	<string>72C6BD35-9761-4016-98DD-54E4FCC9A2BD</string>
 	<key>IDESourceControlProjectName</key>
 	<string>hc</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>B47E91CE-B44D-4FD1-A591-C7F5EB83CA61</key>
+		<key>243ACA00-D7C4-4926-8496-86D87ABBE010</key>
 		<string>https://github.com/airbai/hcios.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>hc.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>B47E91CE-B44D-4FD1-A591-C7F5EB83CA61</key>
+		<key>243ACA00-D7C4-4926-8496-86D87ABBE010</key>
 		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
@@ -25,14 +25,14 @@
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>B47E91CE-B44D-4FD1-A591-C7F5EB83CA61</string>
+	<string>243ACA00-D7C4-4926-8496-86D87ABBE010</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>B47E91CE-B44D-4FD1-A591-C7F5EB83CA61</string>
+			<string>243ACA00-D7C4-4926-8496-86D87ABBE010</string>
 			<key>IDESourceControlWCCName</key>
 			<string>hcios</string>
 		</dict>

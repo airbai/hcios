@@ -24,7 +24,11 @@
 @synthesize lblName;
 @synthesize lblUrlData;
 @synthesize lblGrep;
+@synthesize lblActualHtml;
+@synthesize btnGetLatest;
+@synthesize btnRetest;
 @synthesize detailItem;
+__strong UIActivityIndicatorView *_activityIndicatorView;
 - (id)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:style];
@@ -38,15 +42,23 @@
 {
     [super viewDidLoad];
 
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    UIImage *backBtnImage = [UIImage imageNamed:@"Button-(Back)withText.png"]  ;
+    [backBtn setBackgroundImage:backBtnImage forState:UIControlStateNormal];
+    [backBtn addTarget:self action:@selector(goback) forControlEvents:UIControlEventTouchUpInside];
+    backBtn.frame = CGRectMake(0, 0, 54, 30);
+    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:@"< Back" style:UIBarButtonItemStyleDone target:self action:@selector(goback)] ;
+    self.navigationItem.leftBarButtonItem = backButton;
+    self.navigationItem.hidesBackButton = YES;
+    UIColor* activeLabelColor = [UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0];
     [self configureView];
 
 }
 
+- (void)goback
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
 
 - (void)didReceiveMemoryWarning
 {
@@ -58,9 +70,6 @@
 {
     if (detailItem != newDetailItem) {
         detailItem = newDetailItem;
-        
-        // Update the view.
-        //[self configureView];
     }
 }
 
@@ -77,8 +86,40 @@
         self.lblLastTested.text = [self.detailItem lastTested];
         self.lblName.text = [self.detailItem name];
         
-        self.lblUrlData.text = [self.detailItem urlData];
-        self.lblGrep.text = [self.detailItem grep];
+        self.txtUrlData.text = [self.detailItem urlData];
+        self.txtGrep.text = [self.detailItem grep];
+        self.txtActualHtml.text = [self.detailItem actualHtml];
     }
+}
+
+-(void)resizeLabel:(UILabel*)label{
+    CGSize constraint = CGSizeMake(300, 2000.0f);
+    CGSize size = [label.text sizeWithFont:label.font constrainedToSize:constraint lineBreakMode:UILineBreakModeWordWrap];
+    [label setFrame:CGRectMake(10, 0, size.width, size.height)];
+}
+
+- (IBAction)btnGetLatestClicked:(UIBarButtonItem *)sender {
+    [self testServer: @"1"];
+}
+
+- (IBAction)btnRetestClicked:(UIBarButtonItem *)sender {
+    [self testServer: @"2"];
+}
+
+- (void)testServer:(NSString*)resultsFrom {
+    [_activityIndicatorView startAnimating];
+    
+    
+    [Post testServer:self.detailItem.Id :resultsFrom done: ^(NSObject *post, NSError *error) {
+        if (error) {
+            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil) message:[error localizedDescription] delegate:nil cancelButtonTitle:nil otherButtonTitles:NSLocalizedString(@"OK", nil), nil] show];
+        } else {
+            self.detailItem = post;
+            [self configureView];
+        }
+        
+        [_activityIndicatorView stopAnimating];
+        self.navigationItem.rightBarButtonItem.enabled = YES;
+    }];
 }
 @end

@@ -19,9 +19,18 @@
 @property (weak, nonatomic) IBOutlet UILabel *lblHost;
 @property (weak, nonatomic) IBOutlet UILabel *lblGroup;
 @property (weak, nonatomic) IBOutlet UILabel *lblExeTime;
+@property (weak, nonatomic) IBOutlet UITextView *txtActualHtml;
+@property (weak, nonatomic) IBOutlet UITextView *txtGrep;
+@property (weak, nonatomic) IBOutlet UITextView *txtUrlData;
 @property (weak, nonatomic) IBOutlet UILabel *lblLastTested;
 @property (weak, nonatomic) IBOutlet UILabel *lblUrlData;
 @property (weak, nonatomic) IBOutlet UILabel *lblGrep;
+@property (weak, nonatomic) IBOutlet UILabel *lblActualHtml;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *btnGetLatest;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *btnRetest;
+- (IBAction)btnGetLatestClicked:(UIBarButtonItem *)sender;
+- (IBAction)btnRetestClicked:(UIBarButtonItem *)sender;
+
 
 @property (strong, nonatomic) Post *detailItem;
 

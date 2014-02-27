@@ -16,9 +16,10 @@
 
 @implementation HealthCheckFilterViewController{
     @private
-    NSArray* _posts;
+    NSMutableArray* _posts;
 }
-
+@synthesize nav;
+@synthesize btnDone;
 @synthesize delegate;
 @synthesize selectedRow;
 @synthesize selectedIndexPath;
@@ -35,14 +36,37 @@
 {
     [super viewDidLoad];
 
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    
     if (self.delegate && [self.delegate respondsToSelector:@selector(prepareFilterData:)]) {
-        _posts = [self.delegate prepareFilterData:self];
+        NSArray* posts = [self.delegate prepareFilterData:self];
+        Post *post = [[Post alloc] init];
+        post.serviceGroup = @"All";
+        _posts = [[NSMutableArray alloc]init];
+        [_posts addObject: post];
+        
+        for (int i=0;i<[posts count];i++)
+        {
+            Post* item=[posts objectAtIndex:i];
+            [_posts addObject:item];
+        }
     }
+    
+    selectedRow = -1;
+    
+    UIImage* settingImage = [UIImage imageNamed:@"RoundedButtonDone.png"];;
+    CGRect frameSettingImg = CGRectMake(0, 0, settingImage.size.width, settingImage.size.height);
+    UIButton * settingButton = [[UIButton alloc] initWithFrame:frameSettingImg];
+    [settingButton setBackgroundImage:settingImage forState:UIControlStateNormal];
+    [settingButton addTarget:self action:@selector(btnDoneClicked:) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(btnDoneClicked:)] ;
+    self.navigationItem.rightBarButtonItem = doneButton;
+    self.navigationItem.hidesBackButton = YES;
+    
+    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStyleDone target:self action:@selector(btnCancelClicked:)] ;
+    self.navigationItem.leftBarButtonItem = cancelButton;
+    self.navigationItem.hidesBackButton = YES;
+    
+    [self.navigationController.navigationBar.topItem setRightBarButtonItem: doneButton];
 }
 
 - (void)didReceiveMemoryWarning
@@ -76,6 +100,7 @@
     }
     
     int row = [indexPath row];
+    
     if(row == selectedRow)
     {
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
@@ -90,66 +115,17 @@
     return cell;
 }
 
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
-{
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
-    
     selectedRow = [indexPath row];
     selectedIndexPath = indexPath;
     [tableView reloadData];
 }
 
-- (IBAction)btnDoneClicked:(id)sender {
+- (void)btnDoneClicked:(id)sender {
     if (self.delegate ) {
-        //NSIndexPath *selectedIndexPath = [self.tableView indexPathForSelectedRow];//[NSIndexPath indexPathForItem:selectedRow inSection:0];
-        
         UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:selectedIndexPath];
         NSMutableArray* selectedGroups = [[NSMutableArray alloc]init];
         if(cell != nil)
@@ -158,6 +134,12 @@
             [selectedGroups addObject:cell.textLabel.text];
         }
         [self.delegate cancelButtonClicked :nil selectedGroups:selectedGroups];
+    }
+}
+
+- (void)btnCancelClicked:(id)sender {
+    if (self.delegate ) {
+        [self.delegate dismissPopupView];
     }
 }
 @end

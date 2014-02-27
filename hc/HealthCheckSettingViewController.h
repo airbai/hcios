@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface HealthCheckSettingViewController : UIViewController
+@interface HealthCheckSettingViewController : UITableViewController
 
 @end
