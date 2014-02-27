@@ -26,7 +26,7 @@
 
 //static NSString * const kAFAppDotNetAPIBaseURLString = @"https://alpha-api.app.net/";
 
-static NSString * const kAFAppDotNetAPIBaseURLString = @"http://www.websense.com";   //@"http://www.dev.badgroup.com";
+static NSString * const kAFAppDotNetAPIBaseURLString = @"http://www.[your host].com";   //@"http://www.dev.badgroup.com";
 @implementation AFAppDotNetAPIClient
 
 + (AFAppDotNetAPIClient *)sharedClient {
