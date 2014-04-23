@@ -9,5 +9,9 @@
 #import <UIKit/UIKit.h>
 
 @interface HealthCheckSettingViewController : UITableViewController
+@property (weak, nonatomic) IBOutlet UITextField *txtUsername;
+@property (weak, nonatomic) IBOutlet UITextField *txtPassword;
+@property (weak, nonatomic) IBOutlet UIButton *btnGenerateToken;
+- (IBAction)onClickedGenerate:(id)sender;
 
 @end

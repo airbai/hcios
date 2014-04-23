@@ -29,8 +29,18 @@
 #if __IPHONE_OS_VERSION_MIN_REQUIRED
 
 #import "AFNetworkActivityIndicatorManager.h"
+#import "DataHolder.h"
 
 @implementation HealthCheckAppDelegate
+- (void)applicationDidEnterBackground:(UIApplication *)application
+{
+    [[DataHolder sharedInstance] saveData];
+}
+
+- (void)applicationWillEnterForeground:(UIApplication *)application
+{
+    [[DataHolder sharedInstance] loadData];
+}
 
 - (BOOL)application:(UIApplication *)application
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -86,13 +96,13 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 
 
 // Delegation methods
-- (void)application:(UIApplication *)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)devToken {
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)devToken {
     const void *devTokenBytes = [devToken bytes];
     self.registered = YES;
     [self sendProviderDeviceToken:devTokenBytes]; // custom method
 }
 
-- (void)application:(UIApplication *)app didFailToRegisterForRemoteNotificationsWithError:(NSError *)err {
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)err {
     NSLog(@"Error in registration. Error: %@", err);
     
 }
