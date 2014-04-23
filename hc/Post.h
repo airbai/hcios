@@ -37,6 +37,8 @@
 @property (readonly) NSString *actualHtml;
 
 - (id)initWithAttributes:(NSDictionary *)attributes;
+- (NSString*)getUsername;
+- (NSString*)getToken;
 
 + (void)globalTimelinePostsWithBlock:(NSString*)resultFrom done:(void (^)(NSArray *posts, NSError *error))block;
 
