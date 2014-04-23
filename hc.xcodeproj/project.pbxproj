@@ -14,6 +14,7 @@
 		210C13EB17A568AE004D6306 /* reload4.png in Resources */ = {isa = PBXBuildFile; fileRef = 210C13EA17A568AE004D6306 /* reload4.png */; };
 		210C13ED17A6C11A004D6306 /* retest@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 210C13EC17A6C11A004D6306 /* retest@1x.png */; };
 		210C13EF17A7FBE2004D6306 /* latest.png in Resources */ = {isa = PBXBuildFile; fileRef = 210C13EE17A7FBE1004D6306 /* latest.png */; };
+		210D56341907A93200C5D82C /* DataHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 210D56331907A93200C5D82C /* DataHolder.m */; };
 		21101DF11755F9900075EC27 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21101DF01755F9900075EC27 /* UIKit.framework */; };
 		21101DF31755F9900075EC27 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21101DF21755F9900075EC27 /* Foundation.framework */; };
 		21101DF51755F9900075EC27 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21101DF41755F9900075EC27 /* CoreGraphics.framework */; };
@@ -43,6 +44,7 @@
 		2122709517A80FC200153F12 /* inactive.png in Resources */ = {isa = PBXBuildFile; fileRef = 2122709417A80FC200153F12 /* inactive.png */; };
 		2122709717A829CC00153F12 /* bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 2122709617A829CB00153F12 /* bg.png */; };
 		213EAFEA18323D330011014B /* ServerInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 213EAFE918323D330011014B /* ServerInstance.m */; };
+		21614AE818D04CF2001459E0 /* Setting.m in Sources */ = {isa = PBXBuildFile; fileRef = 21614AE718D04CF2001459E0 /* Setting.m */; };
 		2178AB72175F083E001405FA /* settings.png in Resources */ = {isa = PBXBuildFile; fileRef = 2178AB70175F083E001405FA /* settings.png */; };
 		2178AB73175F083E001405FA /* settings@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2178AB71175F083E001405FA /* settings@2x.png */; };
 		2178AB76175F0866001405FA /* reload-button.png in Resources */ = {isa = PBXBuildFile; fileRef = 2178AB74175F0865001405FA /* reload-button.png */; };
@@ -130,6 +132,8 @@
 		210C13EA17A568AE004D6306 /* reload4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = reload4.png; sourceTree = "<group>"; };
 		210C13EC17A6C11A004D6306 /* retest@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "retest@1x.png"; sourceTree = "<group>"; };
 		210C13EE17A7FBE1004D6306 /* latest.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = latest.png; sourceTree = "<group>"; };
+		210D56321907A93200C5D82C /* DataHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataHolder.h; sourceTree = "<group>"; };
+		210D56331907A93200C5D82C /* DataHolder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataHolder.m; sourceTree = "<group>"; };
 		21101DED1755F9900075EC27 /* HealthCheck.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HealthCheck.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		21101DF01755F9900075EC27 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		21101DF21755F9900075EC27 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -173,6 +177,8 @@
 		2122709617A829CB00153F12 /* bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bg.png; sourceTree = "<group>"; };
 		213EAFE818323D330011014B /* ServerInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerInstance.h; sourceTree = "<group>"; };
 		213EAFE918323D330011014B /* ServerInstance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerInstance.m; sourceTree = "<group>"; };
+		21614AE618D04CF2001459E0 /* Setting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Setting.h; sourceTree = "<group>"; };
+		21614AE718D04CF2001459E0 /* Setting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Setting.m; sourceTree = "<group>"; };
 		2178AB70175F083E001405FA /* settings.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings.png; sourceTree = "<group>"; };
 		2178AB71175F083E001405FA /* settings@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "settings@2x.png"; sourceTree = "<group>"; };
 		2178AB74175F0865001405FA /* reload-button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "reload-button.png"; sourceTree = "<group>"; };
@@ -395,6 +401,10 @@
 				21101E971755FB3C0075EC27 /* Post.m */,
 				213EAFE818323D330011014B /* ServerInstance.h */,
 				213EAFE918323D330011014B /* ServerInstance.m */,
+				21614AE618D04CF2001459E0 /* Setting.h */,
+				21614AE718D04CF2001459E0 /* Setting.m */,
+				210D56321907A93200C5D82C /* DataHolder.h */,
+				210D56331907A93200C5D82C /* DataHolder.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -708,12 +718,14 @@
 				21C5883618BF85340013B075 /* AFNetworkActivityIndicatorManager.m in Sources */,
 				21101E101755F9900075EC27 /* HealthCheckDetailViewController.m in Sources */,
 				21101E951755FB250075EC27 /* AFAppDotNetAPIClient.m in Sources */,
+				21614AE818D04CF2001459E0 /* Setting.m in Sources */,
 				21101E9A1755FB3C0075EC27 /* Post.m in Sources */,
 				21101E9E175601EE0075EC27 /* PostTableViewCell.m in Sources */,
 				21101EA8175752370075EC27 /* IIViewDeckController.m in Sources */,
 				21101EAB175752530075EC27 /* IIWrapController.m in Sources */,
 				21101EB11757582F0075EC27 /* HealthCheckSettingViewController.m in Sources */,
 				21101EBA175861460075EC27 /* HealthCheckCenterViewController.m in Sources */,
+				210D56341907A93200C5D82C /* DataHolder.m in Sources */,
 				21C5883218BF85340013B075 /* AFHTTPClient.m in Sources */,
 				21A30F37176F03420077885F /* MJPopupBackgroundView.m in Sources */,
 				213EAFEA18323D330011014B /* ServerInstance.m in Sources */,
