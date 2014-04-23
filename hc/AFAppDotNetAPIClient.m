@@ -26,7 +26,11 @@
 
 //static NSString * const kAFAppDotNetAPIBaseURLString = @"https://alpha-api.app.net/";
 
+<<<<<<< HEAD
 static NSString * const kAFAppDotNetAPIBaseURLString = @"http://www.dev.badgroup.com";
+=======
+static NSString * const kAFAppDotNetAPIBaseURLString = @"http://www.[your host].com";   //@"http://www.dev.badgroup.com";
+>>>>>>> FETCH_HEAD
 @implementation AFAppDotNetAPIClient
 
 + (AFAppDotNetAPIClient *)sharedClient {
